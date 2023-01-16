@@ -257,13 +257,11 @@ export class UserService {
     return tokens;
   }
 
-  async activate(link: string): Promise<Object> {
+  async activate(link: string): Promise<void> {
     await this.userRepository.update(
       { is_active: true },
       { where: { activation_link: link, is_active: false }, returning: true },
     );
-
-    return { message: 'Success registered' };
   }
 
   async activatation(activateDto: ActivateDto): Promise<User> {
@@ -290,7 +288,7 @@ export class UserService {
     );
 
     if (!user) {
-      throw new ForbiddenException('Already ban or deban');
+      throw new ForbiddenException('Already banned or revoked');
     }
 
     return user[1][0];
