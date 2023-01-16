@@ -9,9 +9,6 @@ export class MailService {
   async sendUserConfirmation(user: User, link: string): Promise<void> {
     const url = `${process.env.API_HOST}/api/user/activate/${link}`;
 
-    console.log(url);
-    console.log(user);
-
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Welcome to Nice App! Confirm your Email',

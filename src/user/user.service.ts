@@ -30,7 +30,7 @@ export class UserService {
   async signupAdmin(
     createUserDto: CreateUserDto,
     res: Response,
-  ): Promise<Object> {
+  ): Promise<Tokens> {
     const { email, password } = createUserDto;
 
     await this.findUserByEmail(email);
@@ -44,29 +44,28 @@ export class UserService {
       activation_link: uniqueKey,
     });
 
-    // SENDING ACTIVATION LINK TO USER EMAIL
     await this.mailService.sendUserConfirmation(user, user.activation_link);
 
     const role = await this.rolesService.getRolesByValue('CREATOR');
     await user.$set('roles', [role.id]);
     user.roles = [role];
 
-    // const tokens = await this.getTokens(
-    //   user.id,
-    //   user.email,
-    //   user.is_active,
-    //   user.is_bann,
-    //   user.roles,
-    // );
+    const tokens = await this.getTokens(
+      user.id,
+      user.email,
+      user.is_active,
+      user.is_bann,
+      user.roles,
+    );
 
-    // await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
+    await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
 
-    // res.cookie('refresh_token', tokens.refresh_token, {
-    //   maxAge: 7 * 24 * 60 * 1000,
-    //   httpOnly: true,
-    // });
+    res.cookie('refresh_token', tokens.refresh_token, {
+      maxAge: 7 * 24 * 60 * 1000,
+      httpOnly: true,
+    });
 
-    return { message: 'Activation link sending in your email' };
+    return tokens;
   }
 
   async signupUser(
@@ -258,36 +257,21 @@ export class UserService {
     return tokens;
   }
 
-  async activate(link: string, res: Response): Promise<Tokens> {
-    const user = await this.userRepository.update(
+  async activate(link: string): Promise<Object> {
+    await this.userRepository.update(
       { is_active: true },
-      { where: { activation_link: link }, returning: true },
+      { where: { activation_link: link, is_active: false }, returning: true },
     );
 
-    const tokens = await this.getTokens(
-      user[1][0].id,
-      user[1][0].email,
-      user[1][0].is_active,
-      user[1][0].is_bann,
-      user[1][0].roles,
-    );
-
-    await this.updateRefreshTokenHash(user[1][0].id, tokens.refresh_token);
-
-    res.cookie('refresh_token', tokens.refresh_token, {
-      maxAge: 7 * 24 * 60 * 1000,
-      httpOnly: true,
-    });
-
-    return tokens;
+    return { message: 'Success registered' };
   }
 
   async activatation(activateDto: ActivateDto): Promise<User> {
     const { value, user_id } = activateDto;
 
     const user = await this.userRepository.update(
-      { is_active: value },
-      { where: { id: user_id, is_active: !value }, returning: true },
+      { is_bann: value },
+      { where: { id: user_id, is_bann: !value }, returning: true },
     );
 
     if (!user) {
@@ -297,7 +281,20 @@ export class UserService {
     return user[1][0];
   }
 
-  async restriction(user: User, req: Request) {}
+  async restriction(banedValue: ActivateDto): Promise<User> {
+    const { value, user_id } = banedValue;
+
+    const user = await this.userRepository.update(
+      { is_active: value },
+      { where: { id: user_id, is_active: !value }, returning: true },
+    );
+
+    if (!user) {
+      throw new ForbiddenException('Already ban or deban');
+    }
+
+    return user[1][0];
+  }
 
   async findAllUsers(): Promise<User[]> {
     const users = await this.userRepository.findAll({

@@ -28,7 +28,7 @@ export class RolesGuard implements CanActivate {
         ROLES_KEY,
         [context.getHandler(), context.getClass()],
       );
-      console.log(requiredRoles);
+
       if (!requiredRoles) {
         return true;
       }
@@ -46,22 +46,11 @@ export class RolesGuard implements CanActivate {
         publicKey: process.env.ACCESS_TOKEN_KEY,
       });
 
-      console.log(
-        user.roles.some((role) => requiredRoles.includes(role.value)),
-      );
-      console.log(user.is_active);
-
-      console.log(
-        user.roles.some((role) => requiredRoles.includes(role.value)) &&
-          user.is_active,
-      );
-
       return (
         user.roles.some((role) => requiredRoles.includes(role.value)) &&
         user.is_active
       );
     } catch (error) {
-      console.log(error);
       throw new HttpException('Jwt expired', HttpStatus.UNAUTHORIZED);
     }
   }

@@ -83,7 +83,6 @@ export class UserController {
   @UseGuards(RolesGuard)
   @Get()
   findAll() {
-    console.log('entered');
     return this.userService.findAllUsers();
   }
 
@@ -100,11 +99,8 @@ export class UserController {
   @ApiOperation({ summary: 'activate user' })
   @ApiResponse({ status: 200, type: [User] })
   @Get('activate/:link')
-  activate(
-    @Param('link') link: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return this.userService.activate(link, res);
+  activate(@Param('link') link: string) {
+    return this.userService.activate(link);
   }
 
   @ApiOperation({ summary: 'delete user by id' })
