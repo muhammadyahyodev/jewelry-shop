@@ -28,4 +28,5 @@ async function start() {
     console.log(`\nServer started has been on ${PORT} port...`);
   });
 }
+
 start();

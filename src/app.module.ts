@@ -36,6 +36,7 @@ import { Status } from './status/schemas/status.model';
 import { Detail } from './detail/schemas/detail.model';
 import { Material } from './material/schemas/material.model';
 import { JewelryType } from './jewelry-type/schemas/jewelry-type.model';
+import { Role } from './roles/schemas/role.model';
 
 @Module({
   imports: [
@@ -47,10 +48,11 @@ import { JewelryType } from './jewelry-type/schemas/jewelry-type.model';
       dialect: 'postgres',
       host: process.env.POSTGRES_HOST,
       port: Number(process.env.POSTGRES_PORT),
-      username: String(process.env.POSTGRES_USER),
-      password: String(process.env.POSTGRES_PASSWORD),
-      database: String(process.env.POSTGRES_DB),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       models: [
+        Role,
         Shop,
         Jewelry,
         Brand,
