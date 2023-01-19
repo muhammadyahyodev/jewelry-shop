@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Jewelry } from '../jewelry/schemas/jewelry.model';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './schemas/cart.model';
@@ -8,9 +9,16 @@ import { Cart } from './schemas/cart.model';
 export class CartService {
   constructor(
     @InjectModel(Cart) private readonly cartRepository: typeof Cart,
+    @InjectModel(Jewelry) private readonly jewelryRepository: typeof Jewelry,
   ) {}
 
   async createCart(createCartDto: CreateCartDto): Promise<Cart> {
+    const { jewelry_id } = createCartDto;
+    await this.jewelryRepository.update(
+      { status_id: 2 },
+      { where: { id: jewelry_id }, returning: true },
+    );
+
     const cart: Cart = await this.cartRepository.create(createCartDto);
 
     return cart;

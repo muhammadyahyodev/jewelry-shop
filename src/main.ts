@@ -18,7 +18,7 @@ async function start() {
     .setTitle('Jewelry-shop')
     .setDescription('REST API')
     .setVersion('1.0.0')
-    .addTag('NodeJS, NestJS, Postgres, sequilize')
+    .addTag('NodeJS, NestJS, Postgres, sequelize')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

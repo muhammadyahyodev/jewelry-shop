@@ -40,6 +40,7 @@ export class JewelryService {
 
   async findAllJewelry(): Promise<Jewelry[]> {
     const jewelry = await this.jewelryRepository.findAll({
+      where: { status_id: 1 },
       include: { all: true },
     });
 

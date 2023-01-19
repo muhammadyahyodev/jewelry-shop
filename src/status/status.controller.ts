@@ -29,7 +29,7 @@ export class StatusController {
   @ApiOperation({ summary: 'create new status' })
   @ApiResponse({ status: 200, type: [Status] })
   @ApiBearerAuth()
-  @Roles('ADMIN')
+  // @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Post()
   create(@Body() createStatusDto: CreateStatusDto) {
@@ -39,7 +39,7 @@ export class StatusController {
   @ApiOperation({ summary: 'show all status' })
   @ApiResponse({ status: 200, type: [Status] })
   @ApiBearerAuth()
-  @Roles('ADMIN')
+  // @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Get()
   findAll() {
@@ -49,8 +49,8 @@ export class StatusController {
   @ApiOperation({ summary: 'show status by id' })
   @ApiResponse({ status: 200, type: [Status] })
   @ApiBearerAuth()
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  // @Roles('ADMIN')
+  // @UseGuards(RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.statusService.findOneStatusById(+id);

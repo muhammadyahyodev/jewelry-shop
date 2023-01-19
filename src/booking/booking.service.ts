@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Cart } from '../cart/schemas/cart.model';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Booking } from './schemas/booking.model';
@@ -8,9 +13,20 @@ import { Booking } from './schemas/booking.model';
 export class BookingService {
   constructor(
     @InjectModel(Booking) private readonly bookingRepository: typeof Booking,
+    @InjectModel(Cart) private readonly cartRepository: typeof Cart,
   ) {}
 
   async createBooking(createBookingDto: CreateBookingDto): Promise<Booking> {
+    const { cart_id } = createBookingDto;
+
+    const status = await this.cartRepository.findOne({
+      where: { id: cart_id },
+    });
+
+    // if ((status.status_id = 3)) {
+    //   throw new ForbiddenException('Time out');
+    // }
+
     const booking = await this.bookingRepository.create(createBookingDto);
 
     return booking;

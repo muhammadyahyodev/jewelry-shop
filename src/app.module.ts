@@ -21,6 +21,7 @@ import { UserAddressModule } from './user-address/user-address.module';
 import { MailModule } from './mail/mail.module';
 import { FilesModule } from './files/files.module';
 import { Shop } from './shop/schemas/shop.model';
+``;
 import { Jewelry } from './jewelry/schemas/jewelry.model';
 import { Brand } from './brand/schemas/brand.model';
 import { UserAddress } from './user-address/schemas/user-address.model';
